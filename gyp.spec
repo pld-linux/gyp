@@ -3,7 +3,7 @@
 %bcond_without	tests		# build without tests
 
 %define		svnrev	770
-%define		rel		2
+%define		rel		3
 Summary:	Generate Your Projects
 Name:		gyp
 Version:	0.1
