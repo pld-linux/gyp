@@ -2,18 +2,20 @@
 # Conditional build:
 %bcond_without	tests		# build without tests
 
-%define		svnrev	785
+%define		svnrev	790
 %define		rel		1
 Summary:	Generate Your Projects
 Name:		gyp
-Version:	0.1
+Version:	1
 Release:	%{svnrev}.%{rel}
 License:	New BSD
 Group:		Development/Building
-# svn co http://gyp.googlecode.com/svn/trunk gyp
-# tar -cjf gyp-$(svnversion gyp).tar.bz2 --exclude=.svn --remove-files gyp
+# revno=790
+# svn co http://gyp.googlecode.com/svn/trunk${revno:+@$revno} gyp
+# tar -cjf gyp-$(svnversion gyp).tar.bz2 --exclude=.svn gyp
+# ../dropin gyp-$(svnversion gyp).tar.bz2
 Source0:	%{name}-%{svnrev}.tar.bz2
-# Source0-md5:	7f7f7068bf4aa2e3d9d03d3ed3cf6d8c
+# Source0-md5:	4ec4439cf8d043cdd29a52432ff9358e
 URL:		http://code.google.com/p/gyp/
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
