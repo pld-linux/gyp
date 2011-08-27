@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_without	tests		# build without tests
 
-%define		svnrev	1013
+%define		svnrev	1014
 %define		rel		1
 Summary:	Generate Your Projects
 Name:		gyp
@@ -12,7 +12,7 @@ License:	New BSD
 Group:		Development/Building
 # use get-source.sh
 Source0:	%{name}-%{svnrev}.tar.bz2
-# Source0-md5:	81e8f9727b345e674d2385db5adcfa5d
+# Source0-md5:	466068e52f1e25b6c4ffbc75a1320995
 URL:		http://code.google.com/p/gyp/
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
