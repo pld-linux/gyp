@@ -1,8 +1,8 @@
 #
 # Conditional build:
-%bcond_without	tests		# build without tests
+%bcond_with	tests		# build without tests
 
-%define		svnrev	1014
+%define		svnrev	1103
 %define		rel		1
 Summary:	Generate Your Projects
 Name:		gyp
@@ -12,7 +12,7 @@ License:	New BSD
 Group:		Development/Building
 # use get-source.sh
 Source0:	%{name}-%{svnrev}.tar.bz2
-# Source0-md5:	466068e52f1e25b6c4ffbc75a1320995
+# Source0-md5:	7e5de65db1e0c049a832dc48ac074df3
 URL:		http://code.google.com/p/gyp/
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
@@ -45,6 +45,8 @@ irreconcilable differences.
 %build
 %{__python} setup.py build
 
+%{?with_tests:%{__python} gyptest.py -a}
+
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install \
@@ -58,6 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%doc AUTHORS LICENSE
 %attr(755,root,root) %{_bindir}/gyp
 
 %files -n python-%{name}
