@@ -7,7 +7,7 @@ specfile=$p.spec
 set -e
 svn co $svn${revno:+@$revno} $p
 svnrev=$(svnversion $p)
-tar -cjf $p-$svnrev.tar.bz2 --exclude-vcs $p
+tar -cjf $p-$svnrev.tar.bz2 --exclude-vcs --exclude=gyp/test/* $p
 ../dropin $p-$svnrev.tar.bz2
 
 sed -i -e "
