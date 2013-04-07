@@ -3,11 +3,12 @@
 %bcond_with	tests		# build without tests
 
 %define		svnrev	1602
-#define		rel		%{nil}
+%define		rel		1
 Summary:	Generate Your Projects
 Name:		gyp
-Version:	1
-Release:	%{svnrev}%{?rel:.%{rel}}
+# grep version= setup.py
+Version:	0.1
+Release:	0.svn%{svnrev}.%{rel}
 License:	New BSD
 Group:		Development/Building
 # use get-source.sh
