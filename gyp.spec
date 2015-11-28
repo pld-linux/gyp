@@ -3,7 +3,7 @@
 %bcond_with	tests		# build without tests
 
 %define		svnrev	1602
-%define		rel		1
+%define		rel		2
 Summary:	Generate Your Projects
 Summary(pl.UTF-8):	GYP (Generate Your Projects) - narzędzie do generowania systemów budowania
 Name:		gyp
