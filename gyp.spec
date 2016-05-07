@@ -3,7 +3,7 @@
 %bcond_with	tests		# build without tests
 
 %define		svnrev	1602
-%define		rel		2
+%define		rel	3
 Summary:	Generate Your Projects
 Summary(pl.UTF-8):	GYP (Generate Your Projects) - narzędzie do generowania systemów budowania
 Name:		gyp
@@ -64,15 +64,14 @@ Ten pakiet zawiera moduły Pythona.
 %setup -q -n %{name}
 
 %build
-%{__python} setup.py build
+%py_build
 
 %{?with_tests:%{__python} gyptest.py -a}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+
+%py_install
 
 %py_postclean
 
