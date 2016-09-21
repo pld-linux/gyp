@@ -15,7 +15,7 @@ Group:		Development/Building
 # use get-source.sh
 Source0:	%{name}-%{svnrev}.tar.bz2
 # Source0-md5:	fd1809e1716f46a585684aa0fb2df897
-URL:		http://code.google.com/p/gyp/
+URL:		https://gyp.gsrc.io/
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
