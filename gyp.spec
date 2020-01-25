@@ -2,19 +2,25 @@
 # Conditional build:
 %bcond_with	tests		# build without tests
 
-%define		svnrev	1602
-%define		rel	3
+%define		gitrev	e87d37d6
+%define		rel	1
 Summary:	Generate Your Projects
 Summary(pl.UTF-8):	GYP (Generate Your Projects) - narzędzie do generowania systemów budowania
 Name:		gyp
 # grep version= setup.py
 Version:	0.1
-Release:	0.svn%{svnrev}.%{rel}
+Release:	1.%{rel}.%{gitrev}
 License:	New BSD
 Group:		Development/Building
 # use get-source.sh
-Source0:	%{name}-%{svnrev}.tar.bz2
-# Source0-md5:	fd1809e1716f46a585684aa0fb2df897
+Source0:	%{name}-%{version}-git%{gitrev}.tar.xz
+# Source0-md5:	9b6f6c10bb8def91e26c17f0be1f7f90
+Patch0:         gyp-rpmoptflags.patch
+Patch1:         gyp-ninja-build.patch
+Patch2:         gyp-python3.patch
+Patch3:         gyp-python38.patch
+Patch4:         gyp-fix-cmake.patch
+Patch5:         gyp-python39.patch
 URL:		https://gyp.gsrc.io/
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
@@ -61,7 +67,13 @@ poszczególnych platform, aby obsłużyć różnice między nimi.
 Ten pakiet zawiera moduły Pythona.
 
 %prep
-%setup -q -n %{name}
+%setup -q -c
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 %py_build

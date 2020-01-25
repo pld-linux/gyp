@@ -1,16 +1,17 @@
 #!/bin/sh
-p=gyp
-svn=http://$p.googlecode.com/svn/trunk
-revno=$1
-specfile=$p.spec
 
 set -e
-svn co $svn${revno:+@$revno} $p
-svnrev=$(svnversion $p)
-tar -cjf $p-$svnrev.tar.bz2 --exclude-vcs --exclude=gyp/test/* $p
-../dropin $p-$svnrev.tar.bz2
+
+git clone https://chromium.googlesource.com/external/gyp
+cd gyp
+version=$(grep version= setup.py|cut -d\' -f2)
+revision=$(git log --oneline|head -1|cut -d' ' -f1)
+tar -a --exclude-vcs -cf ../gyp-$version-git$revision.tar.xz *
+cd ..
+
+../dropin gyp-$version-git$revision.tar.xz
 
 sed -i -e "
-	s/^\(%define[ \t]\+svnrev[ \t]\+\)[0-9]\+\$/\1$svnrev/
-" $specfile
-../md5 $p.spec
+	s/^\(%define[ \t]\+gitrev[ \t]\+\)[0-9]\+\$/\1$revision/
+" gyp.spec
+../md5 gyp.spec
