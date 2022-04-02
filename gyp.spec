@@ -128,18 +128,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS LICENSE
 %attr(755,root,root) %{_bindir}/gyp
 
-%if %{with python3}
-%files -n python3-%{name}
-%defattr(644,root,root,755)
-%dir %{py3_sitescriptdir}/gyp
-%dir %{py3_sitescriptdir}/gyp/generator
-%{py3_sitescriptdir}/gyp/*.py
-%{py3_sitescriptdir}/gyp/__pycache__
-%{py3_sitescriptdir}/gyp/generator/*.py
-%{py3_sitescriptdir}/gyp/generator/__pycache__
-%{py3_sitescriptdir}/gyp-%{version}-py*.egg-info
-%endif
-
 %if !%{with python3}
 %files -n python-%{name}
 %defattr(644,root,root,755)
@@ -150,4 +138,16 @@ rm -rf $RPM_BUILD_ROOT
 %if "%{py_ver}" > "2.4"
 %{py_sitescriptdir}/gyp-%{version}-py*.egg-info
 %endif
+%endif
+
+%if %{with python3}
+%files -n python3-%{name}
+%defattr(644,root,root,755)
+%dir %{py3_sitescriptdir}/gyp
+%dir %{py3_sitescriptdir}/gyp/generator
+%{py3_sitescriptdir}/gyp/*.py
+%{py3_sitescriptdir}/gyp/__pycache__
+%{py3_sitescriptdir}/gyp/generator/*.py
+%{py3_sitescriptdir}/gyp/generator/__pycache__
+%{py3_sitescriptdir}/gyp-%{version}-py*.egg-info
 %endif
