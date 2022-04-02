@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	tests		# build without tests
-%bcond_with	python3		# build with python 2.x
+%bcond_with	python3		# build with python 3.x
 
 %define		gitrev	e87d37d6
 %define		rel	1
