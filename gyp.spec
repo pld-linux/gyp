@@ -1,9 +1,9 @@
 #
 # Conditional build:
 %bcond_with	tests		# build without tests
-%bcond_with	python3		# build with python 3.x
+%bcond_without	python3		# build without python 3.x
 
-%define		gitrev	e87d37d6
+%define		gitrev	1615ec32
 %define		rel	1
 Summary:	Generate Your Projects
 Summary(pl.UTF-8):	GYP (Generate Your Projects) - narzędzie do generowania systemów budowania
@@ -15,7 +15,7 @@ License:	New BSD
 Group:		Development/Building
 # use get-source.sh
 Source0:	%{name}-%{version}-git%{gitrev}.tar.xz
-# Source0-md5:	9b6f6c10bb8def91e26c17f0be1f7f90
+# Source0-md5:	9a0c88b2c0c2a739271930e31934c90e
 Patch0:         gyp-rpmoptflags.patch
 Patch1:         gyp-ninja-build.patch
 Patch2:         gyp-python3.patch

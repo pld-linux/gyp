@@ -1,55 +1,122 @@
-diff --git a/pylib/gyp/common.py b/pylib/gyp/common.py
-index b268d229..03c99cab 100644
---- a/pylib/gyp/common.py
-+++ b/pylib/gyp/common.py
-@@ -4,7 +4,6 @@
- 
- from __future__ import with_statement
- 
--import collections
- import errno
- import filecmp
- import os.path
-@@ -12,6 +11,11 @@ import re
+diff -pruN gyp-patching.orig/pylib/gyp/common.py gyp-patching/pylib/gyp/common.py
+--- gyp-patching.orig/pylib/gyp/common.py	2026-03-14 03:50:12.000000000 +0100
++++ gyp-patching/pylib/gyp/common.py	2026-03-14 03:54:33.797408490 +0100
+@@ -11,7 +11,7 @@ import re
  import tempfile
  import sys
  
-+try:
-+  from collections.abc import MutableSet
-+except ImportError:
-+  from collections import MutableSet
-+
+-from six.moves import collections_abc
++from collections.abc import MutableSet
+ 
  
  # A minimal memoizing decorator. It'll blow up if the args aren't immutable,
- # among other "problems".
-@@ -494,7 +498,7 @@ def uniquer(seq, idfun=None):
+@@ -495,7 +495,7 @@ def uniquer(seq, idfun=None):
  
  
  # Based on http://code.activestate.com/recipes/576694/.
--class OrderedSet(collections.MutableSet):
+-class OrderedSet(collections_abc.MutableSet):
 +class OrderedSet(MutableSet):
    def __init__(self, iterable=None):
      self.end = end = []
      end += [None, end, end]         # sentinel node for doubly linked list
-diff --git a/pylib/gyp/generator/msvs.py b/pylib/gyp/generator/msvs.py
-index 843e7067..327fe8d2 100644
---- a/pylib/gyp/generator/msvs.py
-+++ b/pylib/gyp/generator/msvs.py
-@@ -4,7 +4,7 @@
+diff -pruN gyp-patching.orig/pylib/gyp/generator/make.py gyp-patching/pylib/gyp/generator/make.py
+--- gyp-patching.orig/pylib/gyp/generator/make.py	2026-03-14 03:50:12.000000000 +0100
++++ gyp-patching/pylib/gyp/generator/make.py	2026-03-14 03:54:43.143253804 +0100
+@@ -1774,7 +1774,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)
  
- from __future__ import print_function
+       # Hash the target name to avoid generating overlong filenames.
+       cmdstring = (command if command else self.target).encode('utf-8')
+-      cmddigest = hashlib.sha1(cmdstring).hexdigest()
++      cmddigest = hashlib.sha1(cmdstring, usedforsecurity=False).hexdigest()
+       intermediate = "%s.intermediate" % (cmddigest)
+       self.WriteLn('%s: %s' % (' '.join(outputs), intermediate))
+       self.WriteLn('\t%s' % '@:');
+diff -pruN gyp-patching.orig/pylib/gyp/generator/ninja.py gyp-patching/pylib/gyp/generator/ninja.py
+--- gyp-patching.orig/pylib/gyp/generator/ninja.py	2026-03-14 03:50:12.000000000 +0100
++++ gyp-patching/pylib/gyp/generator/ninja.py	2026-03-14 03:54:40.630201972 +0100
+@@ -14,7 +14,6 @@ import re
+ import signal
+ import subprocess
+ import sys
+-import six
+ import gyp
+ import gyp.common
+ from gyp.common import OrderedSet
+@@ -752,7 +751,7 @@ class NinjaWriter(object):
+         if self.flavor == 'win':
+           # WriteNewNinjaRule uses unique_name for creating an rsp file on win.
+           extra_bindings.append(('unique_name',
+-              hashlib.md5(six.ensure_binary(outputs[0])).hexdigest()))
++              hashlib.md5(outputs[0].encode('utf-8'), usedforsecurity=False).hexdigest()))
  
--import collections
-+from collections import OrderedDict
- import copy
- import ntpath
- import os
-@@ -195,7 +195,7 @@ def _ConvertSourcesToFilterHierarchy(sources, prefix=None, excluded=None,
-   if not prefix: prefix = []
-   result = []
-   excluded_result = []
--  folders = collections.OrderedDict()
-+  folders = OrderedDict()
-   # Gather files into the final result, excluded, or folders.
-   for s in sources:
-     if len(s) == 1:
+         self.ninja.build(outputs, rule_name, self.GypPathToNinja(source),
+                          implicit=inputs,
+@@ -2389,7 +2388,7 @@ def GenerateOutputForConfig(target_list,
+     qualified_target_for_hash = gyp.common.QualifiedTarget(build_file, name,
+                                                            toolset)
+     qualified_target_for_hash = qualified_target_for_hash.encode('utf-8')
+-    hash_for_rules = hashlib.md5(qualified_target_for_hash).hexdigest()
++    hash_for_rules = hashlib.md5(qualified_target_for_hash, usedforsecurity=False).hexdigest()
+ 
+     base_path = os.path.dirname(build_file)
+     obj = 'obj'
+diff -pruN gyp-patching.orig/pylib/gyp/msvs_emulation.py gyp-patching/pylib/gyp/msvs_emulation.py
+--- gyp-patching.orig/pylib/gyp/msvs_emulation.py	2026-03-14 03:50:12.000000000 +0100
++++ gyp-patching/pylib/gyp/msvs_emulation.py	2026-03-14 03:54:36.069920471 +0100
+@@ -12,7 +12,7 @@ import re
+ import subprocess
+ import sys
+ 
+-from six.moves import collections_abc
++from collections.abc import Iterable
+ 
+ from gyp.common import OrderedSet
+ import gyp.MSVSUtil
+@@ -94,7 +94,7 @@ def _AddPrefix(element, prefix):
+   """Add |prefix| to |element| or each subelement if element is iterable."""
+   if element is None:
+     return element
+-  if (isinstance(element, collections_abc.Iterable) and
++  if (isinstance(element, Iterable) and
+       not isinstance(element, basestring)):
+     return [prefix + e for e in element]
+   else:
+@@ -107,7 +107,7 @@ def _DoRemapping(element, map):
+   if map is not None and element is not None:
+     if not callable(map):
+       map = map.get # Assume it's a dict, otherwise a callable to do the remap.
+-    if (isinstance(element, collections_abc.Iterable) and
++    if (isinstance(element, Iterable) and
+         not isinstance(element, basestring)):
+       element = filter(None, [map(elem) for elem in element])
+     else:
+@@ -120,7 +120,7 @@ def _AppendOrReturn(append, element):
+   then add |element| to it, adding each item in |element| if it's a list or
+   tuple."""
+   if append is not None and element is not None:
+-    if (isinstance(element, collections_abc.Iterable) and
++    if (isinstance(element, Iterable) and
+         not isinstance(element, basestring)):
+       append.extend(element)
+     else:
+diff -pruN gyp-patching.orig/test/lib/TestGyp.py gyp-patching/test/lib/TestGyp.py
+--- gyp-patching.orig/test/lib/TestGyp.py	2026-03-14 03:50:12.000000000 +0100
++++ gyp-patching/test/lib/TestGyp.py	2026-03-14 03:54:46.190581585 +0100
+@@ -18,7 +18,7 @@ import tempfile
+ 
+ from contextlib import contextmanager
+ 
+-from six.moves import collections_abc
++from collections.abc import Iterable
+ 
+ import TestCmd
+ import TestCommon
+@@ -497,7 +497,7 @@ class TestGypCMake(TestGypBase):
+     if status is None:
+       kw['status'] = None
+     else:
+-      if not isinstance(status, collections_abc.Iterable): status = (status,)
++      if not isinstance(status, Iterable): status = (status,)
+       kw['status'] = list(itertools.chain((0,), status))
+     self.cmake_build(gyp_file, target, **kw)
+     kw['status'] = status
